@@ -1,5 +1,8 @@
 from fastapi import APIRouter
 from sqlalchemy import text
+from .schemas import QueryRequest
+
+from AI.llm_sql import generate_sql
 from .database import engine
 
 
@@ -10,28 +13,18 @@ def health_check():
     return {"status": "API is working fine"}
 
 
-@router.get("/query")
-def execute_question_sql(question:str):
-    sql_query=
-
-
-
-
-
 @router.post("/query")
-def query_data():
-    sql = """
-    SELECT country, SUM(amount) AS total_sales
-    FROM sale
-    GROUP BY country
-    ORDER BY total_sales DESC
-    """
+def execute_question_sql(request: QueryRequest):
+    sql_query = generate_sql(request.question)
 
     with engine.connect() as connection:
-        result = connection.execute(text(sql))
+        result = connection.execute(text(sql_query))
         rows = [dict(row._mapping) for row in result]
 
     return {
-        "sql": sql.strip(),
+        "sql": sql_query.strip(),
         "result": rows
     }
+
+
+

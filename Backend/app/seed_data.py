@@ -1,12 +1,12 @@
 from .database import SessionLocal, engine, Base
-from .models import Customer, Product, Sale
+from .models import Customer, Product, Sales
 
 Base.metadata.create_all(bind=engine)
 
 db = SessionLocal()
 
 # clear old data
-db.query(Sale).delete()
+db.query(Sales).delete()
 db.query(Customer).delete()
 db.query(Product).delete()
 
@@ -31,14 +31,14 @@ db.add_all(products)
 db.commit()
 
 sales = [
-    Sale(customer_id=1, product_id=1, quantity=1, amount=1200, country="USA", quarter="Q1"),
-    Sale(customer_id=2, product_id=2, quantity=2, amount=1600, country="Canada", quarter="Q1"),
-    Sale(customer_id=3, product_id=3, quantity=1, amount=300, country="USA", quarter="Q2"),
-    Sale(customer_id=4, product_id=4, quantity=4, amount=600, country="UK", quarter="Q2"),
-    Sale(customer_id=5, product_id=5, quantity=3, amount=600, country="Germany", quarter="Q3"),
-    Sale(customer_id=1, product_id=2, quantity=1, amount=800, country="USA", quarter="Q3"),
-    Sale(customer_id=2, product_id=1, quantity=1, amount=1200, country="Canada", quarter="Q4"),
-    Sale(customer_id=4, product_id=3, quantity=2, amount=600, country="UK", quarter="Q4"),
+    Sales(customer_id=1, product_id=1, quantity=1, amount=1200, country="USA", quarter="Q1"),
+    Sales(customer_id=2, product_id=2, quantity=2, amount=1600, country="Canada", quarter="Q1"),
+    Sales(customer_id=3, product_id=3, quantity=1, amount=300, country="USA", quarter="Q2"),
+    Sales(customer_id=4, product_id=4, quantity=4, amount=600, country="UK", quarter="Q2"),
+    Sales(customer_id=5, product_id=5, quantity=3, amount=600, country="Germany", quarter="Q3"),
+    Sales(customer_id=1, product_id=2, quantity=1, amount=800, country="USA", quarter="Q3"),
+    Sales(customer_id=2, product_id=1, quantity=1, amount=1200, country="Canada", quarter="Q4"),
+    Sales(customer_id=4, product_id=3, quantity=2, amount=600, country="UK", quarter="Q4"),
 ]
 
 db.add_all(sales)

@@ -22,8 +22,8 @@ class Product(Base):
 
 
 
-class Sale(Base):
-    __tablename__="sale"
+class Sales(Base):
+    __tablename__="sales"
     
     id = Column(Integer, primary_key=True, index=True)
     customer_id = Column(Integer, ForeignKey("customers.id"), nullable=False)

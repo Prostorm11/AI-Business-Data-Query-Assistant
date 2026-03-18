@@ -1,6 +1,6 @@
 import requests
 
-from my_prompt import my_prompt
+from  .my_prompt import my_prompt
 
 OLLAMA_URL = "http://localhost:11434/api/generate"
 MODEL_NAME = "qwen2.5:1.5b"
@@ -28,7 +28,7 @@ def generate_sql(question:str)->str:
     return sql
 
 
-if __name__ == "__main__":
+""" if __name__ == "__main__":
     question = "Which country generated the most sales?"
     sql = generate_sql(question)
-    print(sql)
+    print(sql) """
