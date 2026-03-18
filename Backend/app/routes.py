@@ -10,6 +10,12 @@ def health_check():
     return {"status": "API is working fine"}
 
 
+@router.get("/query")
+def execute_question_sql(question:str):
+    sql_query=
+
+
+
 
 
 @router.post("/query")
