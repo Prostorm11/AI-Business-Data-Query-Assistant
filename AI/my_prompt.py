@@ -24,6 +24,8 @@ Guidelines:
 - Use aggregation functions like SUM() when needed
 - Use GROUP BY when aggregating
 - Use ORDER BY and LIMIT when the question asks for top or highest values
+- If the question cannot be answered using the given database schema,
+- return exactly: INVALID_QUERY
 
 JOIN rules:
 - Join customers only if customer-specific data is needed (e.g., customer name)
