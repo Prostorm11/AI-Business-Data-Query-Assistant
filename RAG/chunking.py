@@ -2,12 +2,14 @@ import tiktoken
 import nltk
 from typing import List, Dict
 
+from RAG.config import CHUNK_SIZE
+
 nltk.download("punkt", quiet=True)
 
 encoding = tiktoken.get_encoding("cl100k_base")
 
 
-def chunk_text(text: str, chunk_size: int, use_sentences: bool = True, overlap: int = 50) -> List[dict]:
+def chunk_text(text: str, chunk_size: int=CHUNK_SIZE, use_sentences: bool = True, overlap: int = 30) -> List[dict]:
     text = text.strip()
     if not text:
         return []

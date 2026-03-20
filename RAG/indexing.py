@@ -2,15 +2,9 @@ import os
 import chromadb
 from chromadb.config import Settings
 
-COLLECTION_NAME = "business_docs"
-CHROMA_PATH = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), "..", "..", "vectorstore", "chroma_db")
-)
+from RAG.config import get_collection
 
-def get_collection():
-    client = chromadb.PersistentClient(path=CHROMA_PATH)
-    collection = client.get_or_create_collection(name=COLLECTION_NAME)
-    return collection
+
 
 
 def index_to_chroma(embedded_chunks,file_name:str):
