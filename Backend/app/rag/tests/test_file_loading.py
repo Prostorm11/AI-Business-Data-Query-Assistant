@@ -1,5 +1,5 @@
 # tests/test_file_loading.py
-from file_loading import load_text_file
+from app.rag.file_loading import load_text_file
 
 def test_load_text():
     text = load_text_file("sample.txt")

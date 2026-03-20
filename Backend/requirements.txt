@@ -1,5 +1,14 @@
+
 fastapi
 uvicorn
-sqlalchemy
 pydantic
+sqlalchemy
 pandas
+numpy
+chromadb
+sentence-transformers
+tiktoken
+nltk
+pypdf   # or PyPDF2 if you're already using it
+python-dotenv
+pytest

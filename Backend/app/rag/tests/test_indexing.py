@@ -1,5 +1,5 @@
 # tests/test_indexing.py
-from RAG.indexing import index_to_chroma
+from app.rag.indexing import index_to_chroma
 
 def test_indexing():
     embedded_chunks = [

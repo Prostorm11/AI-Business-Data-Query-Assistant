@@ -1,5 +1,5 @@
 from typing import List, Dict
-from RAG.config import get_collection, get_embedding_model
+from app.rag.config import get_collection, get_embedding_model
 
 
 model=get_embedding_model()

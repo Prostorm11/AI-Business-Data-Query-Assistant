@@ -2,7 +2,7 @@ import os
 import chromadb
 from chromadb.config import Settings
 
-from RAG.config import get_collection
+from app.rag.config import get_collection
 
 
 

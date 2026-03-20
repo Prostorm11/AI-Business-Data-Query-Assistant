@@ -2,7 +2,7 @@ import tiktoken
 import nltk
 from typing import List, Dict
 
-from RAG.config import CHUNK_SIZE
+from app.rag.config import CHUNK_SIZE
 
 nltk.download("punkt", quiet=True)
 

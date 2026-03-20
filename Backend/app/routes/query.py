@@ -1,12 +1,13 @@
 from fastapi import APIRouter
 from sqlalchemy import text
-from .schemas import QueryRequest
 
-from AI.llm_sql import generate_sql
-from .database import engine
+from app.models.schemas import QueryRequest
+from app.services.llm_sql import generate_sql
+from app.services.llm_rag import generate_rag_answer
+from app.db.database import engine
 
+router = APIRouter()
 
-router =APIRouter()
 
 @router.get("/health")
 def health_check():
@@ -40,5 +41,17 @@ def execute_question_sql(request: QueryRequest):
     except Exception as e:
         return {
             "error": str(e),
-            "sql": sql_query if 'sql_query' in locals() else None
+            "sql": sql_query if "sql_query" in locals() else None
         }
+
+
+@router.post("/rag-query")
+def execute_rag_query(request: QueryRequest):
+    try:
+        if request.question.strip().lower() in ["", "string"]:
+            return {"error": "Please enter a real question"}
+
+        return generate_rag_answer(request.question)
+
+    except Exception as e:
+        return {"error": str(e)}

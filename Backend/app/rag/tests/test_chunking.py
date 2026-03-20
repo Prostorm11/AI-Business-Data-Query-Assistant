@@ -1,5 +1,5 @@
 # tests/test_chunking.py
-from RAG.chunking import chunk_text
+from app.rag.chunking import chunk_text
 
 def test_chunking():
     text = "This is a simple test text for chunking. " * 10

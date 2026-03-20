@@ -1,5 +1,5 @@
 # tests/test_embedding.py
-from RAG.embedding import embed_chunks
+from app.rag.embedding import embed_chunks
 
 def test_embedding():
     chunks = [

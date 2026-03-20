@@ -2,7 +2,7 @@
 import os
 from typing import List
 from pathlib import Path
-from PyPDF2 import PdfReader  # for PDF support
+from pypdf import PdfReader  # for PDF support
 
 def load_text_file(file_path: str) -> str:
     """

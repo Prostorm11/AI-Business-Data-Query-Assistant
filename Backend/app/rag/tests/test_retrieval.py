@@ -1,5 +1,5 @@
 # tests/test_retrieval.py
-from RAG.retrieval import retrieve_documents
+from app.rag.retrieval import retrieve_documents
 
 def test_retrieval():
     results = retrieve_documents("What is AI?", n_results=2)

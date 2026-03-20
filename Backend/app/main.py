@@ -1,7 +1,7 @@
 from fastapi import FastAPI
-from .database import Base, engine
-from .models import Customer, Product, Sales
-from .routes import router
+from app.db.database import Base, engine
+from app.models.models import Customer, Product, Sales
+from app.routes.query import router
 
 app = FastAPI(title="AI Business Query Backend")
 
