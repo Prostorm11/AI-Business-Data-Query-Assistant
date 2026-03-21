@@ -1,41 +1,44 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useRagQuery } from "../../hooks/use-rag-query"
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
-import { QueryInput } from "../shared/query-input"
-import { SampleQuestions } from "./sample-questions"
-import { sampleDocumentQuestions } from "../../lib/data/placeholder-data"
-import { EmptyState, ErrorState, LoadingState } from "../shared/query-states"
-import { DocumentQueryResult } from "./document-query-result"
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Button } from "../ui/button";
+import { QueryInput } from "../shared/query-input";
+import { SampleQuestions } from "../shared/sample-questions";
+import { DocumentQueryResult } from "../document-assistant/document-query-result";
+import {
+  EmptyState,
+  LoadingState,
+  ErrorState,
+} from "../shared/query-states";
 
+import { sampleDocumentQuestions } from "../../lib/data/placeholder-data";
+import type { RagQueryResponse } from "../../lib/types/rag";
 
 interface DocumentAssistantTabProps {
-  onQuerySubmit?: (query: string) => void
+  query: string;
+  setQuery: (value: string) => void;
+  data: RagQueryResponse | null;
+  loading: boolean;
+  error: string | null;
+  onSubmit: () => void;
+  onClear: () => void;
+  onSavePrompt?: () => void;
 }
 
-export function DocumentAssistantTab({ onQuerySubmit }: DocumentAssistantTabProps) {
-  const [query, setQuery] = useState("")
-  const { data, loading, error, submit, clear } = useRagQuery()
-
-  const handleSubmit = async () => {
-    if (!query.trim()) return
-    await submit(query)
-    onQuerySubmit?.(query)
-  }
-
+export function DocumentAssistantTab({
+  query,
+  setQuery,
+  data,
+  loading,
+  error,
+  onSubmit,
+  onClear,
+  onSavePrompt,
+}: DocumentAssistantTabProps) {
   const handleClear = () => {
-    setQuery("")
-    clear()
-  }
-
-  const handleRetry = () => {
-    handleSubmit()
-  }
-
-  const handleSampleSelect = (question: string) => {
-    setQuery(question)
-  }
+    setQuery("");
+    onClear();
+  };
 
   return (
     <div className="space-y-4">
@@ -43,19 +46,32 @@ export function DocumentAssistantTab({ onQuerySubmit }: DocumentAssistantTabProp
         <CardHeader className="pb-3">
           <CardTitle className="text-base">Search Internal Knowledge</CardTitle>
         </CardHeader>
+
         <CardContent className="space-y-4">
           <QueryInput
             value={query}
             onChange={setQuery}
-            onSubmit={handleSubmit}
+            onSubmit={onSubmit}
             onClear={handleClear}
             isLoading={loading}
             placeholder="e.g., What is AI?"
             submitLabel="Ask"
           />
+
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onSavePrompt}
+              disabled={!query.trim() || loading}
+            >
+              Save Prompt
+            </Button>
+          </div>
+
           <SampleQuestions
             questions={sampleDocumentQuestions}
-            onSelect={handleSampleSelect}
+            onSelect={setQuery}
             disabled={loading}
           />
         </CardContent>
@@ -63,8 +79,8 @@ export function DocumentAssistantTab({ onQuerySubmit }: DocumentAssistantTabProp
 
       {!loading && !error && !data && <EmptyState type="document" />}
       {loading && <LoadingState />}
-      {error && <ErrorState message={error} onRetry={handleRetry} />}
+      {error && <ErrorState message={error} onRetry={onSubmit} />}
       {data && <DocumentQueryResult result={data} />}
     </div>
-  )
+  );
 }

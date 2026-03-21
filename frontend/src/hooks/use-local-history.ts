@@ -1,43 +1,84 @@
-"use client";
-
 import { useEffect, useState } from "react";
+import type { RecentQuery, SavedPrompt, QueryTabType } from "../lib/types/common";
 
-export interface HistoryItem {
-  id: string;
-  type: "data" | "document";
-  question: string;
-  createdAt: string;
+const RECENT_QUERIES_KEY = "bqa_recent_queries";
+const SAVED_PROMPTS_KEY = "bqa_saved_prompts";
+
+function readFromStorage<T>(key: string, fallback: T): T {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
+  } catch {
+    return fallback;
+  }
 }
 
-const STORAGE_KEY = "business-query-history";
+function writeToStorage<T>(key: string, value: T) {
+  localStorage.setItem(key, JSON.stringify(value));
+}
 
 export function useLocalHistory() {
-  const [history, setHistory] = useState<HistoryItem[]>([]);
+  const [recentQueries, setRecentQueries] = useState<RecentQuery[]>([]);
+  const [savedPrompts, setSavedPrompts] = useState<SavedPrompt[]>([]);
 
   useEffect(() => {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      setHistory(JSON.parse(raw));
-    }
+    setRecentQueries(readFromStorage<RecentQuery[]>(RECENT_QUERIES_KEY, []));
+    setSavedPrompts(readFromStorage<SavedPrompt[]>(SAVED_PROMPTS_KEY, []));
   }, []);
 
-  const persist = (items: HistoryItem[]) => {
-    setHistory(items);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+  const addRecentQuery = (query: string, type: QueryTabType) => {
+    const newItem: RecentQuery = {
+      id: crypto.randomUUID(),
+      query,
+      type,
+      timestamp: new Date().toISOString(),
+    };
+
+    setRecentQueries((prev) => {
+      const deduped = prev.filter(
+        (item) => !(item.query === query && item.type === type)
+      );
+      const next = [newItem, ...deduped].slice(0, 10);
+      writeToStorage(RECENT_QUERIES_KEY, next);
+      return next;
+    });
   };
 
-  const addHistory = (item: Omit<HistoryItem, "id" | "createdAt">) => {
-    const newItem: HistoryItem = {
-      ...item,
+  const clearRecentQueries = () => {
+    setRecentQueries([]);
+    writeToStorage(RECENT_QUERIES_KEY, []);
+  };
+
+  const savePrompt = (label: string, query: string, type: QueryTabType) => {
+    const newPrompt: SavedPrompt = {
       id: crypto.randomUUID(),
+      label: label.trim() || query.slice(0, 40),
+      query,
+      type,
       createdAt: new Date().toISOString(),
     };
-    persist([newItem, ...history].slice(0, 10));
+
+    setSavedPrompts((prev) => {
+      const next = [newPrompt, ...prev].slice(0, 20);
+      writeToStorage(SAVED_PROMPTS_KEY, next);
+      return next;
+    });
   };
 
-  const clearHistory = () => {
-    persist([]);
+  const removeSavedPrompt = (id: string) => {
+    setSavedPrompts((prev) => {
+      const next = prev.filter((item) => item.id !== id);
+      writeToStorage(SAVED_PROMPTS_KEY, next);
+      return next;
+    });
   };
 
-  return { history, addHistory, clearHistory };
+  return {
+    recentQueries,
+    savedPrompts,
+    addRecentQuery,
+    clearRecentQueries,
+    savePrompt,
+    removeSavedPrompt,
+  };
 }

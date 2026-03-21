@@ -1,41 +1,44 @@
-"use client"
+"use client";
 
-import { useState } from "react"
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Button } from "../../components/ui/button";
+import { QueryInput } from "../shared/query-input";
+import { SampleQuestions } from "../shared/sample-questions";
+import { DataQueryResult } from "../data-query/data-query-result";
+import {
+  EmptyState,
+  LoadingState,
+  ErrorState,
+} from "../shared/query-states";
 
-import { SampleQuestions } from "../document-assistant/sample-questions"
-import { useDataQuery } from "../../hooks/use-data-query"
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
-import { QueryInput } from "../shared/query-input"
-import { sampleDataQuestions } from "../../lib/data/placeholder-data"
-import { EmptyState, ErrorState, LoadingState } from "../shared/query-states"
-import { DataQueryResult } from "./data-query-result"
+import { sampleDataQuestions } from "../../lib/data/placeholder-data";
+import type { DataQueryResponse } from "../../lib/types/data-query";
 
 interface DataQueryTabProps {
-  onQuerySubmit?: (query: string) => void
+  query: string;
+  setQuery: (value: string) => void;
+  data: DataQueryResponse | null;
+  loading: boolean;
+  error: string | null;
+  onSubmit: () => void;
+  onClear: () => void;
+  onSavePrompt?: () => void;
 }
 
-export function DataQueryTab({ onQuerySubmit }: DataQueryTabProps) {
-  const [query, setQuery] = useState("")
-  const { data, loading, error, submit, clear } = useDataQuery()
-
-  const handleSubmit = async () => {
-    if (!query.trim()) return
-    await submit(query)
-    onQuerySubmit?.(query)
-  }
-
+export function DataQueryTab({
+  query,
+  setQuery,
+  data,
+  loading,
+  error,
+  onSubmit,
+  onClear,
+  onSavePrompt,
+}: DataQueryTabProps) {
   const handleClear = () => {
-    setQuery("")
-    clear()
-  }
-
-  const handleRetry = () => {
-    handleSubmit()
-  }
-
-  const handleSampleSelect = (question: string) => {
-    setQuery(question)
-  }
+    setQuery("");
+    onClear();
+  };
 
   return (
     <div className="space-y-4">
@@ -43,19 +46,32 @@ export function DataQueryTab({ onQuerySubmit }: DataQueryTabProps) {
         <CardHeader className="pb-3">
           <CardTitle className="text-base">Ask a Business Question</CardTitle>
         </CardHeader>
+
         <CardContent className="space-y-4">
           <QueryInput
             value={query}
             onChange={setQuery}
-            onSubmit={handleSubmit}
+            onSubmit={onSubmit}
             onClear={handleClear}
             isLoading={loading}
             placeholder="e.g., What were our total sales last quarter?"
             submitLabel="Run Query"
           />
+
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onSavePrompt}
+              disabled={!query.trim() || loading}
+            >
+              Save Prompt
+            </Button>
+          </div>
+
           <SampleQuestions
             questions={sampleDataQuestions}
-            onSelect={handleSampleSelect}
+            onSelect={setQuery}
             disabled={loading}
           />
         </CardContent>
@@ -63,8 +79,8 @@ export function DataQueryTab({ onQuerySubmit }: DataQueryTabProps) {
 
       {!loading && !error && !data && <EmptyState type="data" />}
       {loading && <LoadingState />}
-      {error && <ErrorState message={error} onRetry={handleRetry} />}
+      {error && <ErrorState message={error} onRetry={onSubmit} />}
       {data && <DataQueryResult result={data} />}
     </div>
-  )
+  );
 }
