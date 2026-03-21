@@ -12,3 +12,4 @@ nltk
 pypdf   # or PyPDF2 if you're already using it
 python-dotenv
 pytest
+python-multipart

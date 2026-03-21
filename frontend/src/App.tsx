@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs"
 import { useDataQuery } from "./hooks/use-data-query"
 import { useRagQuery } from "./hooks/use-rag-query"
 import { useLocalHistory } from "./hooks/use-local-history"
+import { useDocumentUpload } from "./hooks/use-document-upload"
 
 import type { QueryTabType } from "./lib/types/common"
 import { usageTips } from "./lib/data/placeholder-data"
@@ -22,6 +23,7 @@ export default function BusinessQueryAssistant() {
 
   const dataQuery = useDataQuery()
   const ragQuery = useRagQuery()
+  const documentUpload = useDocumentUpload()
 
   const {
     recentQueries,
@@ -125,6 +127,11 @@ export default function BusinessQueryAssistant() {
                   onSubmit={handleDocumentSubmit}
                   onClear={handleClearDocumentTab}
                   onSavePrompt={() => handleSaveCurrentPrompt("document")}
+                  documents={documentUpload.documents}
+                  uploading={documentUpload.uploading}
+                  loadingDocuments={documentUpload.loadingDocuments}
+                  uploadError={documentUpload.error}
+                  onUpload={documentUpload.upload}
                 />
               </TabsContent>
             </Tabs>

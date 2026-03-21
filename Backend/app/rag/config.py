@@ -32,5 +32,5 @@ def get_embedding_model():
         _model = SentenceTransformer(MODEL_NAME)
 
     return _model
-CHUNK_SIZE = 300
-CHUNK_OVERLAP = 30  
+CHUNK_SIZE = 200
+CHUNK_OVERLAP = 20  

@@ -13,7 +13,6 @@ import {
 } from "../ui/accordion"
 import type { RagQueryResponse, RagSource } from "../../lib/types/rag"
 
-
 interface DocumentQueryResultProps {
   result: RagQueryResponse
 }
@@ -44,9 +43,40 @@ function CopyButton({ text }: { text: string }) {
   )
 }
 
+function getRelevance(score?: number) {
+  if (typeof score !== "number") {
+    return {
+      label: "Unknown",
+      className: "text-muted-foreground",
+      distanceText: null,
+    }
+  }
+
+  if (score < 0.8) {
+    return {
+      label: "High",
+      className: "text-green-600 border-green-200",
+      distanceText: score.toFixed(3),
+    }
+  }
+
+  if (score < 1.2) {
+    return {
+      label: "Medium",
+      className: "text-yellow-600 border-yellow-200",
+      distanceText: score.toFixed(3),
+    }
+  }
+
+  return {
+    label: "Low",
+    className: "text-red-600 border-red-200",
+    distanceText: score.toFixed(3),
+  }
+}
+
 function SourceCard({ source, index }: { source: RagSource; index: number }) {
-  const scorePercentage =
-    typeof source.score === "number" ? Math.round(source.score * 100) : null
+  const relevance = getRelevance(source.score)
 
   return (
     <AccordionItem value={`source-${index}`} className="border rounded-lg px-4">
@@ -56,10 +86,11 @@ function SourceCard({ source, index }: { source: RagSource; index: number }) {
           <span className="font-medium text-sm">
             {source.metadata?.file_name || `Source ${index + 1}`}
           </span>
-          {scorePercentage !== null && (
-            <Badge variant="outline" className="ml-auto">
+
+          {relevance.distanceText !== null && (
+            <Badge variant="outline" className={`ml-auto ${relevance.className}`}>
               <Star className="mr-1 h-3 w-3" />
-              {scorePercentage}%
+              {relevance.label} • {relevance.distanceText}
             </Badge>
           )}
         </div>

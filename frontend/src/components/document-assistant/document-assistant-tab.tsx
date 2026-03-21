@@ -5,6 +5,7 @@ import { Button } from "../ui/button";
 import { QueryInput } from "../shared/query-input";
 import { SampleQuestions } from "../shared/sample-questions";
 import { DocumentQueryResult } from "../document-assistant/document-query-result";
+import { DocumentUploadPanel } from "../document-assistant/document-upload-panel";
 import {
   EmptyState,
   LoadingState,
@@ -13,6 +14,7 @@ import {
 
 import { sampleDocumentQuestions } from "../../lib/data/placeholder-data";
 import type { RagQueryResponse } from "../../lib/types/rag";
+import type { DocumentListItem } from "../../lib/types/documents";
 
 interface DocumentAssistantTabProps {
   query: string;
@@ -23,6 +25,12 @@ interface DocumentAssistantTabProps {
   onSubmit: () => void;
   onClear: () => void;
   onSavePrompt?: () => void;
+
+  documents: DocumentListItem[];
+  uploading: boolean;
+  loadingDocuments: boolean;
+  uploadError: string | null;
+  onUpload: (file: File) => Promise<void>;
 }
 
 export function DocumentAssistantTab({
@@ -34,6 +42,11 @@ export function DocumentAssistantTab({
   onSubmit,
   onClear,
   onSavePrompt,
+  documents,
+  uploading,
+  loadingDocuments,
+  uploadError,
+  onUpload,
 }: DocumentAssistantTabProps) {
   const handleClear = () => {
     setQuery("");
@@ -42,6 +55,14 @@ export function DocumentAssistantTab({
 
   return (
     <div className="space-y-4">
+      <DocumentUploadPanel
+        documents={documents}
+        uploading={uploading}
+        loadingDocuments={loadingDocuments}
+        error={uploadError}
+        onUpload={onUpload}
+      />
+
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-base">Search Internal Knowledge</CardTitle>
