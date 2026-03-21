@@ -1,15 +1,17 @@
+--extra-index-url https://download.pytorch.org/whl/cpu
 
 fastapi
 uvicorn
 pydantic
 sqlalchemy
 pandas
-numpy
+numpy<2
 chromadb
 sentence-transformers
 tiktoken
 nltk
-pypdf   # or PyPDF2 if you're already using it
+pypdf
 python-dotenv
 pytest
 python-multipart
+torch==2.4.1+cpu

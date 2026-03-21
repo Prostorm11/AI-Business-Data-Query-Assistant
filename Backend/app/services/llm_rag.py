@@ -1,8 +1,10 @@
+import os
 import requests
 from app.services.rag_prompt import build_rag_prompt
 from app.rag.rag import retrieve_context
 
-OLLAMA_URL = "http://localhost:11434/api/generate"
+OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+OLLAMA_URL = f"{OLLAMA_BASE_URL}/api/generate"
 MODEL_NAME = "qwen2.5:1.5b"
 
 

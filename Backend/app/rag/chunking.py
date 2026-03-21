@@ -4,7 +4,10 @@ from typing import List, Dict
 
 from app.rag.config import CHUNK_SIZE
 
-nltk.download("punkt", quiet=True)
+try:
+    nltk.data.find("tokenizers/punkt")
+except LookupError:
+    nltk.download("punkt")
 
 encoding = tiktoken.get_encoding("cl100k_base")
 
