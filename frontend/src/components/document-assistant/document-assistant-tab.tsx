@@ -1,17 +1,10 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { Button } from "../ui/button";
-import { QueryInput } from "../shared/query-input";
-import { SampleQuestions } from "../shared/sample-questions";
 import { DocumentQueryResult } from "../document-assistant/document-query-result";
-import { DocumentUploadPanel } from "../document-assistant/document-upload-panel";
-import {
-  EmptyState,
-  LoadingState,
-  ErrorState,
-} from "../shared/query-states";
-
+import { KnowledgeBaseCard } from "../document-assistant/knowledge-base-card";
+import { QuickExamples } from "../document-assistant/quick-examples";
+import { QueryInput } from "../shared/query-input";
+import { EmptyState, LoadingState, ErrorState } from "../shared/query-states";
 import { sampleDocumentQuestions } from "../../lib/data/placeholder-data";
 import type { RagQueryResponse } from "../../lib/types/rag";
 import type { DocumentListItem } from "../../lib/types/documents";
@@ -25,7 +18,6 @@ interface DocumentAssistantTabProps {
   onSubmit: () => void;
   onClear: () => void;
   onSavePrompt?: () => void;
-
   documents: DocumentListItem[];
   uploading: boolean;
   loadingDocuments: boolean;
@@ -54,53 +46,46 @@ export function DocumentAssistantTab({
   };
 
   return (
-    <div className="space-y-4">
-      <DocumentUploadPanel
+    <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+      <KnowledgeBaseCard
         documents={documents}
         uploading={uploading}
         loadingDocuments={loadingDocuments}
-        error={uploadError}
+        uploadError={uploadError}
         onUpload={onUpload}
       />
 
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base">Search Internal Knowledge</CardTitle>
-        </CardHeader>
+      <QueryInput
+        value={query}
+        onChange={setQuery}
+        onSubmit={onSubmit}
+        onClear={handleClear}
+        isLoading={loading}
+        onSavePrompt={onSavePrompt}
+        placeholder="e.g., What is the architecture of the backend system?"
+        variant="document-assistant"
+      />
 
-        <CardContent className="space-y-4">
-          <QueryInput
-            value={query}
-            onChange={setQuery}
-            onSubmit={onSubmit}
-            onClear={handleClear}
-            isLoading={loading}
-            placeholder="e.g., What is AI?"
-            submitLabel="Ask"
-          />
+      <QuickExamples
+        questions={sampleDocumentQuestions.slice(0, 4)}
+        loading={loading}
+        onSelect={setQuery}
+      />
 
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={onSavePrompt}
-              disabled={!query.trim() || loading}
-            >
-              Save Prompt
-            </Button>
-          </div>
+      {!loading && !error && !data && (
+        <EmptyState type="document" variant="document-assistant" />
+      )}
 
-          <SampleQuestions
-            questions={sampleDocumentQuestions}
-            onSelect={setQuery}
-            disabled={loading}
-          />
-        </CardContent>
-      </Card>
+      {loading && <LoadingState variant="document-assistant" />}
 
-      {!loading && !error && !data && <EmptyState type="document" />}
-      {loading && <LoadingState />}
-      {error && <ErrorState message={error} onRetry={onSubmit} />}
+      {error && (
+        <ErrorState
+          message={error}
+          onRetry={onSubmit}
+          variant="document-assistant"
+        />
+      )}
+
       {data && <DocumentQueryResult result={data} />}
     </div>
   );
